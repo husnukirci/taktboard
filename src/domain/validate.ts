@@ -4,6 +4,7 @@
  */
 
 import { parseISODate } from './dates'
+import { topologicalOrder } from './graph'
 import type { Schedule } from './types'
 
 export class ScheduleValidationError extends Error {
@@ -135,11 +136,12 @@ export function validateSchedule(input: unknown): Schedule {
     }
 
     if (problems.length === 0) {
-      const cycleIds = findCycle(Object.keys(tasks), deps)
-      if (cycleIds.length > 0) {
-        problems.push(
-          `dependency cycle between tasks ${cycleIds.map((id) => `"${id}"`).join(', ')}`,
-        )
+      try {
+        // Everything above passed, so the graph fields are structurally sound;
+        // topologicalOrder only reads task keys and dependency endpoints.
+        topologicalOrder({ trades: {}, tasks, dependencies: deps } as Schedule)
+      } catch (e) {
+        problems.push(e instanceof Error ? e.message : String(e))
       }
     }
   }
@@ -148,31 +150,4 @@ export function validateSchedule(input: unknown): Schedule {
     throw new ScheduleValidationError(problems)
   }
   return input as unknown as Schedule
-}
-
-/** Kahn's algorithm; whatever cannot be topologically ordered lies on a cycle. */
-function findCycle(
-  taskIds: string[],
-  deps: { predecessorId: string; successorId: string }[],
-): string[] {
-  const inDegree = new Map<string, number>(taskIds.map((id) => [id, 0]))
-  const successors = new Map<string, string[]>()
-  for (const { predecessorId, successorId } of deps) {
-    inDegree.set(successorId, (inDegree.get(successorId) ?? 0) + 1)
-    successors.set(predecessorId, [...(successors.get(predecessorId) ?? []), successorId])
-  }
-  const queue = taskIds.filter((id) => inDegree.get(id) === 0)
-  let visited = 0
-  for (let head = 0; head < queue.length; head++) {
-    const id = queue[head]
-    if (id === undefined) break
-    visited++
-    for (const next of successors.get(id) ?? []) {
-      const remaining = (inDegree.get(next) ?? 0) - 1
-      inDegree.set(next, remaining)
-      if (remaining === 0) queue.push(next)
-    }
-  }
-  if (visited === taskIds.length) return []
-  return taskIds.filter((id) => (inDegree.get(id) ?? 0) > 0)
 }
