@@ -5,5 +5,5 @@ import { defineStore } from 'pinia'
  * Deleted in Phase 2 when the real schedule/ui stores land.
  */
 export const useAppStore = defineStore('app', {
-  state: () => ({ ready: false as boolean }),
+  state: () => ({ ready: false }),
 })
