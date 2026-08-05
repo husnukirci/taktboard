@@ -58,7 +58,7 @@ const ariaLabel = computed(
   <div
     v-if="delayDays !== 0"
     :style="{ gridColumn: barGridColumn(rangeStart, task, 'baseline'), gridRow }"
-    class="h-8 self-center rounded-md border-2 border-dashed border-slate-400 opacity-40"
+    class="pointer-events-none h-8 self-center rounded-md border-2 border-dashed border-slate-400 opacity-40"
     aria-hidden="true"
   />
   <div
