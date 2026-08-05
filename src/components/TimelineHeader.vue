@@ -22,7 +22,8 @@ const months = computed(() => monthSpans(props.days))
     :style="{ gridColumn: `${m.gridColumnStart} / span ${m.span}`, gridRow: 1 }"
     class="sticky top-0 z-10 flex items-center bg-white px-2 text-xs font-semibold text-slate-500"
   >
-    {{ m.label }}
+    <!-- Keeps the label readable while its month span scrolls under the trade column. -->
+    <span class="sticky left-(--trade-w)">{{ m.label }}</span>
   </div>
   <div
     v-for="day in days"
