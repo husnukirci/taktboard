@@ -60,6 +60,31 @@ every move — fine at ~dozens of tasks; revisit only with evidence.
 Boundary validation (`validateSchedule`) is where unknown JSON becomes a
 typed `Schedule`, so inner functions may assume a well-formed graph.
 
+## ADR 4 — Timeline as CSS grid + SVG overlay
+
+Status: accepted (2026-08-05)
+
+**Context.** The board must render day columns, trade lanes, task bars,
+baseline ghosts and (Phase 5) dependency arrows, stay legible at ~dozens of
+tasks, and support drag with day snapping. Candidates: a `<canvas>` scene, an
+off-the-shelf Gantt/timeline library, or DOM layout.
+
+**Decision.** Task bars are plain HTML elements placed by `grid-column` /
+`grid-row` in one CSS grid (`--day-w` columns, `--lane-h` lanes); dependency
+arrows will be a single absolutely positioned SVG layer over the same grid.
+Both layers derive positions from `src/ui/geometry.ts` — one tested mapping
+from schedule data to columns and pixels, never DOM measurement. No Gantt,
+chart, or drag library.
+
+**Consequences.** Bars are real DOM: focusable, styleable with Tailwind
+tokens, inspectable in devtools, and testable with a plain DOM test — none
+of which canvas gives without rebuilding accessibility by hand. A library
+would hide exactly the layout/interaction work this project exists to
+demonstrate, and its data model would fight the domain's. Costs: DOM node
+count grows with tasks × days (fine at this scale, virtualization is a named
+Tier 3 item), and the HTML and SVG layers can only drift if a position is
+computed outside `geometry.ts` — the invariant reviewers should enforce.
+
 ## ADR 5 — Day-granular ISO dates, exclusive task end
 
 Status: accepted (2026-08-05)
