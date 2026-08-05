@@ -9,6 +9,8 @@
   --day-w: 2.75rem; /* width of one day column */
   --lane-h: 4rem; /* height of one trade lane */
   --trade-w: 10rem; /* width of the sticky trade-name column */
+  --hdr-month-h: 1.5rem; /* month-label header row; day row sticks below it */
+  --hdr-day-h: 2rem; /* day-number header row */
 
   /* delay colors */
   --ok: #10b981; /* on time */

@@ -29,7 +29,7 @@ const months = computed(() => monthSpans(props.days))
     v-for="day in days"
     :key="day"
     :style="{ gridColumn: gridColumnOfDate(rangeStart, day), gridRow: 2 }"
-    class="sticky top-6 z-10 flex items-center justify-center border-b border-slate-200 text-xs text-slate-600"
+    class="sticky top-(--hdr-month-h) z-10 flex items-center justify-center border-b border-slate-200 text-xs text-slate-600"
     :class="isWeekend(day) ? 'bg-slate-100' : 'bg-white'"
   >
     {{ dayOfMonth(day) }}

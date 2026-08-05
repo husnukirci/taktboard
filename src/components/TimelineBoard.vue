@@ -28,7 +28,7 @@ const lanes = computed(() => store.tasksByTrade)
 // Track counts depend on the loaded scenario — computed geometry, not styling.
 const gridStyle = computed(() => ({
   gridTemplateColumns: `var(--trade-w) repeat(${days.value.length}, var(--day-w))`,
-  gridTemplateRows: `1.5rem 2rem repeat(${lanes.value.length}, var(--lane-h))`,
+  gridTemplateRows: `var(--hdr-month-h) var(--hdr-day-h) repeat(${lanes.value.length}, var(--lane-h))`,
 }))
 
 function laneRow(laneIndex: number): number {
