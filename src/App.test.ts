@@ -6,6 +6,6 @@ import App from './App.vue'
 describe('App', () => {
   it('renders the project name', () => {
     const wrapper = mount(App, { global: { plugins: [createPinia()] } })
-    expect(wrapper.text()).toContain('not-the-app-name')
+    expect(wrapper.text()).toContain('taktboard')
   })
 })
