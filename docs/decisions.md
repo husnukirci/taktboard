@@ -39,6 +39,71 @@ framework-free and portable (a future NestJS backend could reuse it). Cost:
 one more dependency and a thin layer of indirection the store must not grow
 logic of its own — reviewed per phase.
 
+## ADR 3 — Domain core as a pure TypeScript module
+
+Status: accepted (2026-08-05)
+
+**Context.** The schedule engine (model, validation, delay propagation) is
+the part of this project most worth testing exhaustively and most likely to
+be reused — a Tier 3 NestJS backend would need the same rules. Coupling it
+to Vue reactivity would make both harder.
+
+**Decision.** Everything under `src/domain/` is plain TypeScript with zero
+Vue (or any framework) imports. Functions are pure: `moveTask` returns a new
+schedule and never mutates its input (enforced by a deep-freeze test).
+Consumers import from `src/domain/index.ts` only. The Pinia store adapts the
+domain to the UI; it adds no rules of its own.
+
+**Consequences.** The engine tests run without a DOM and the whole module
+could be published or moved server-side unchanged. Purity costs copies on
+every move — fine at ~dozens of tasks; revisit only with evidence.
+Boundary validation (`validateSchedule`) is where unknown JSON becomes a
+typed `Schedule`, so inner functions may assume a well-formed graph.
+
+## ADR 5 — Day-granular ISO dates, exclusive task end
+
+Status: accepted (2026-08-05)
+
+**Context.** Construction takt plans think in days, not hours. `Date`
+objects invite timezone drift and accidental arithmetic all over the
+codebase; a portfolio reviewer should find date logic in exactly one place.
+
+**Decision.** The domain boundary speaks `YYYY-MM-DD` strings only. All
+date math lives in `src/domain/dates.ts`, which parses to UTC internally
+and rejects malformed or impossible dates. A task's end is **exclusive**:
+`end = addDays(currentStart, durationDays)`, so a successor may start on
+its predecessor's end date. Working-day/holiday calendars are explicitly
+out of scope for Tier 1 (calendar days only).
+
+**Consequences.** Dates are comparable lexicographically, serialize to JSON
+verbatim, and diff in tests without fixtures. The exclusive end makes
+duration math off-by-one-free (`duration = diffDays(start, end)`). Cost:
+durations shown to users span weekends; a working-day calendar would slot
+in behind `dates.ts` without touching callers.
+
+## ADR 6 — Delay propagation as an eager topological push
+
+Status: accepted (2026-08-05)
+
+**Context.** When a task slips, every transitive successor that would now
+start before its predecessor finishes must move. Alternatives: constraint
+solving (overkill), lazy evaluation in selectors (hides the ripple the UI
+wants to show), or an eager pass that rewrites the schedule.
+
+**Decision.** `moveTask(schedule, taskId, newStart)` sets the new start,
+then walks the moved task's transitive successors in topological order,
+pushing each task right to its latest predecessor's end when violated —
+never pulling any task earlier, never moving predecessors, never changing
+durations. It returns the new schedule plus `changedIds` in push order.
+
+**Consequences.** One deterministic pass per move, trivially previewable
+(pure function — Tier 2's live drag preview calls it on the fly) and
+server-authoritative-ready: a backend could run the identical function and
+broadcast the result. Slack is consumed silently (a successor with room
+absorbs a slip), which matches how site managers read takt boards. Moving
+a task earlier never auto-compresses the plan; pulling successors left is
+a deliberate non-feature.
+
 ## ADR 7 — Netlify for hosting, GitHub Actions for CI
 
 Status: accepted (2026-08-05)
