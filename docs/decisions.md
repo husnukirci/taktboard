@@ -153,6 +153,27 @@ a browser. CI and deploy do duplicate the build (~once each), which is
 acceptable at this size. Tier 3's backend would outgrow Netlify's static
 hosting; that migration is deliberately out of scope for v1.
 
+## ADR 8 — Multi-tab sync behind a `SyncAdapter` interface (Tier 2)
+
+Status: proposed (2026-08-05) — not implemented in v1
+
+**Context.** Tier 2 plans multi-tab sync so two browser tabs see the same
+board. The obvious implementation is `BroadcastChannel`, but the real target
+is a Tier 3 WebSocket gateway; coupling the store to either transport would
+make the swap expensive.
+
+**Decision.** When built, sync goes behind a `SyncAdapter` interface owned by
+the store layer: the store publishes committed moves and applies received
+ones, and the adapter is the only code that knows the transport.
+`BroadcastChannel` is the first adapter; a NestJS WebSocket gateway replaces
+the adapter without touching the store. Deferred to Tier 2 — recorded now so
+v1 code review can keep the store transport-free.
+
+**Consequences.** The store's mutation surface (`moveTask`, `loadScenario`,
+`reset`) stays the single write path, which is what makes a sync adapter
+pluggable at all. Nothing in v1 implements this; the ADR exists to keep the
+seam clean and will be revisited (accepted or superseded) when Tier 2 starts.
+
 ## ADR 9 — Data loading: fetch → typed client → vue-query; Pinia for client state
 
 Status: accepted (2026-08-05)
