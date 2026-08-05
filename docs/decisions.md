@@ -121,3 +121,38 @@ and pull request; the two are independent pipelines.
 a browser. CI and deploy do duplicate the build (~once each), which is
 acceptable at this size. Tier 3's backend would outgrow Netlify's static
 hosting; that migration is deliberately out of scope for v1.
+
+## ADR 9 — Data loading: fetch → typed client → vue-query; Pinia for client state
+
+Status: accepted (2026-08-05)
+
+**Context.** The board loads its scenario over HTTP. In Tier 1 the "API" is
+a static `public/scenario.json`, but the loading path should already have
+the shape of a real client-server split so a Tier 3 NestJS backend slots in
+without rework. Server state (fetched, cacheable, refetchable) and client
+state (the schedule being manipulated, drag/selection) have different
+lifecycles and deserve different owners.
+
+**Decision.** Native `fetch` inside a typed client (`src/api/client.ts`)
+that checks `res.ok` (typed `ApiError`) and passes every response through
+`validateSchedule`, so nothing outside the client ever sees unvalidated
+JSON. `@tanstack/vue-query` owns fetching, caching and retry policy via
+`useScenarioQuery` (key `['scenario']`, `staleTime: Infinity` for the
+static file, no retries on 4xx or validation failures — they are
+deterministic). Pinia owns client state: the App-level handoff calls
+`loadScenario` once per fetch, and every component below reads the store,
+never the query. Alternatives considered: axios (rejected — no
+interceptor or legacy-browser need), Pinia Colada (rejected — younger
+library; TanStack knowledge transfers from a prior project).
+
+**Consequences.** The boundary is explicit and testable in three layers:
+client (HTTP + validation), query (caching policy), store (mutations).
+Breaking the seed file surfaces a precise validation message in the UI
+rather than a downstream crash. Mutations stay local in Tier 1 — dragging
+a task mutates the store copy only, and refetching would discard local
+moves; that is acceptable for a demo whose data resets on reload. The
+evolution path is optimistic `useMutation` against a NestJS endpoint with
+WebSocket-driven query invalidation, replacing only the client and the
+handoff. Cost: two state containers to understand, and the server/client
+state split must be policed in review (no component may read query data
+directly).

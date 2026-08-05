@@ -1,0 +1,121 @@
+{
+  "trades": {
+    "trade-shell": { "id": "trade-shell", "name": "Shell", "order": 1 },
+    "trade-electrics": { "id": "trade-electrics", "name": "Electrics", "order": 2 },
+    "trade-drywall": { "id": "trade-drywall", "name": "Drywall", "order": 3 },
+    "trade-painting": { "id": "trade-painting", "name": "Painting", "order": 4 }
+  },
+  "tasks": {
+    "task-foundation": {
+      "id": "task-foundation",
+      "tradeId": "trade-shell",
+      "name": "Foundation works",
+      "baselineStart": "2026-03-02",
+      "currentStart": "2026-03-02",
+      "durationDays": 4
+    },
+    "task-frame": {
+      "id": "task-frame",
+      "tradeId": "trade-shell",
+      "name": "Structural frame",
+      "baselineStart": "2026-03-06",
+      "currentStart": "2026-03-06",
+      "durationDays": 5
+    },
+    "task-roof": {
+      "id": "task-roof",
+      "tradeId": "trade-shell",
+      "name": "Roof envelope",
+      "baselineStart": "2026-03-11",
+      "currentStart": "2026-03-11",
+      "durationDays": 3
+    },
+    "task-rough-elec": {
+      "id": "task-rough-elec",
+      "tradeId": "trade-electrics",
+      "name": "Electrical rough-in",
+      "baselineStart": "2026-03-11",
+      "currentStart": "2026-03-13",
+      "durationDays": 4
+    },
+    "task-panel": {
+      "id": "task-panel",
+      "tradeId": "trade-electrics",
+      "name": "Panel & meter fit-out",
+      "baselineStart": "2026-03-17",
+      "currentStart": "2026-03-17",
+      "durationDays": 2
+    },
+    "task-elec-test": {
+      "id": "task-elec-test",
+      "tradeId": "trade-electrics",
+      "name": "Circuit testing",
+      "baselineStart": "2026-03-23",
+      "currentStart": "2026-03-23",
+      "durationDays": 2
+    },
+    "task-stud": {
+      "id": "task-stud",
+      "tradeId": "trade-drywall",
+      "name": "Stud partitions",
+      "baselineStart": "2026-03-14",
+      "currentStart": "2026-03-14",
+      "durationDays": 3
+    },
+    "task-boards": {
+      "id": "task-boards",
+      "tradeId": "trade-drywall",
+      "name": "Boarding & closing",
+      "baselineStart": "2026-03-17",
+      "currentStart": "2026-03-17",
+      "durationDays": 4
+    },
+    "task-taping": {
+      "id": "task-taping",
+      "tradeId": "trade-drywall",
+      "name": "Taping & skim coat",
+      "baselineStart": "2026-03-21",
+      "currentStart": "2026-03-21",
+      "durationDays": 3
+    },
+    "task-prime": {
+      "id": "task-prime",
+      "tradeId": "trade-painting",
+      "name": "Primer coat",
+      "baselineStart": "2026-03-24",
+      "currentStart": "2026-03-24",
+      "durationDays": 2
+    },
+    "task-final": {
+      "id": "task-final",
+      "tradeId": "trade-painting",
+      "name": "Final paint & touch-up",
+      "baselineStart": "2026-03-26",
+      "currentStart": "2026-03-26",
+      "durationDays": 2
+    },
+    "task-handover": {
+      "id": "task-handover",
+      "tradeId": "trade-painting",
+      "name": "Snagging & handover",
+      "baselineStart": "2026-03-28",
+      "currentStart": "2026-03-28",
+      "durationDays": 1
+    }
+  },
+  "dependencies": [
+    { "predecessorId": "task-foundation", "successorId": "task-frame" },
+    { "predecessorId": "task-frame", "successorId": "task-roof" },
+    { "predecessorId": "task-frame", "successorId": "task-rough-elec" },
+    { "predecessorId": "task-roof", "successorId": "task-stud" },
+    { "predecessorId": "task-rough-elec", "successorId": "task-panel" },
+    { "predecessorId": "task-rough-elec", "successorId": "task-boards" },
+    { "predecessorId": "task-stud", "successorId": "task-boards" },
+    { "predecessorId": "task-boards", "successorId": "task-taping" },
+    { "predecessorId": "task-panel", "successorId": "task-elec-test" },
+    { "predecessorId": "task-taping", "successorId": "task-prime" },
+    { "predecessorId": "task-prime", "successorId": "task-final" },
+    { "predecessorId": "task-elec-test", "successorId": "task-final" },
+    { "predecessorId": "task-final", "successorId": "task-handover" }
+  ]
+}
