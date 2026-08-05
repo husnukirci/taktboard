@@ -73,6 +73,35 @@ describe('useScheduleStore', () => {
     expect(store.lastChangedIds).toEqual([])
   })
 
+  describe('ripple feedback', () => {
+    it('moveSeq counts successful moves since scenario load', () => {
+      const store = useScheduleStore()
+      store.loadScenario(fixture())
+      expect(store.moveSeq).toBe(0)
+
+      store.moveTask('a', '2026-03-04')
+      store.moveTask('a', '2026-03-05')
+
+      expect(store.moveSeq).toBe(2)
+
+      store.loadScenario(fixture())
+      expect(store.moveSeq).toBe(0)
+    })
+
+    it('rippledIds lists the pushed successors, excluding the moved task itself', () => {
+      const store = useScheduleStore()
+      store.loadScenario(fixture())
+      expect(store.rippledIds).toEqual([])
+
+      store.moveTask('a', '2026-03-04')
+
+      expect(store.rippledIds).toEqual(['b'])
+
+      store.reset()
+      expect(store.rippledIds).toEqual([])
+    })
+  })
+
   describe('getters', () => {
     it('are empty before a scenario is loaded', () => {
       const store = useScheduleStore()
