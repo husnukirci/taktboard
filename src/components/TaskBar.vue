@@ -12,6 +12,10 @@ const props = defineProps<{
   gridRow: number
   /** Days late vs. baseline, from the store's `delayOf`. */
   delayDays: number
+  /** True when the last move pushed this task (and it wasn't the moved one). */
+  rippled: boolean
+  /** Move counter; re-keys the pulse so consecutive moves replay it. */
+  rippleSeq: number
 }>()
 
 const { onPointerDown, cancelDrag, moveByDays, isDragging, previewStart } = useTaskDrag({
@@ -72,5 +76,11 @@ const ariaLabel = computed(
     <span v-if="delayDays > 0" class="ml-auto shrink-0 rounded-sm bg-black/20 px-1">
       +{{ delayDays }}d
     </span>
+    <div
+      v-if="rippled"
+      :key="rippleSeq"
+      class="pointer-events-none absolute inset-0 rounded-md bg-white opacity-0 motion-safe:animate-ripple"
+      aria-hidden="true"
+    />
   </div>
 </template>

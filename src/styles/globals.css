@@ -17,3 +17,17 @@
   --warn: #f59e0b; /* slip 1-2 days */
   --late: #ef4444; /* slip >= 3 days */
 }
+
+@theme {
+  /* Ripple pulse on bars pushed by the last move; gated by `motion-safe:`. */
+  --animate-ripple: ripple 600ms ease-out;
+
+  @keyframes ripple {
+    from {
+      opacity: 0.85;
+    }
+    to {
+      opacity: 0;
+    }
+  }
+}

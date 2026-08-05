@@ -71,6 +71,8 @@ function laneRow(laneIndex: number): number {
           :range-start="range.start"
           :grid-row="laneRow(laneIndex)"
           :delay-days="store.delayOf(task.id)"
+          :rippled="store.rippledIds.includes(task.id)"
+          :ripple-seq="store.moveSeq"
         />
       </template>
     </div>
