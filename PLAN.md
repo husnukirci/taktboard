@@ -35,32 +35,32 @@ makes slippage and its ripple visible at a glance.
 
 ### Tier 1 — v1 release
 
-- [ ] Scaffold: Vite + Vue 3 + TS strict + Tailwind v4 + Pinia
-- [ ] Tooling: ESLint (flat) + Prettier + vitest + happy-dom + lint-staged/husky
-- [ ] CI: GH Actions — lint, typecheck, test, build on every push/PR
-- [ ] Netlify deploy live from the first commit (deploy-first rule)
-- [ ] Domain core (pure TS, strict TDD, no Vue imports):
-  - [ ] types: `Task`, `Trade`, `Dependency` (FS only), `Schedule`
-  - [ ] date utils (day-granular; calendar days, no working-day calendar)
-  - [ ] `propagateDelays(schedule, movedTaskId)` — topological pass, pushes
+- [x] Scaffold: Vite + Vue 3 + TS strict + Tailwind v4 + Pinia
+- [x] Tooling: ESLint (flat) + Prettier + vitest + happy-dom + lint-staged/husky
+- [x] CI: GH Actions — lint, typecheck, test, build on every push/PR
+- [x] Netlify deploy live from the first commit (deploy-first rule)
+- [x] Domain core (pure TS, strict TDD, no Vue imports):
+  - [x] types: `Task`, `Trade`, `Dependency` (FS only), `Schedule`
+  - [x] date utils (day-granular; calendar days, no working-day calendar)
+  - [x] `propagateDelays(schedule, movedTaskId)` — topological pass, pushes
         successors right, returns changed set
-  - [ ] per-task delay vs. baseline selector
-- [ ] Pinia store wrapping the domain core (actions: `moveTask`, `reset`,
+  - [x] per-task delay vs. baseline selector
+- [x] Pinia store wrapping the domain core (actions: `moveTask`, `reset`,
       `loadScenario`)
-- [ ] Data loading: `public/scenario.json` served over HTTP; typed
+- [x] Data loading: `public/scenario.json` served over HTTP; typed
       `src/api/client.ts` (native fetch, `res.ok` check, domain validation at
       the boundary); `@tanstack/vue-query` `useQuery` feeding `loadScenario`;
       loading / error / empty states on the board
-- [ ] Seed scenario: realistic small project (~4 trades, ~12 tasks, 1 baked-in
+- [x] Seed scenario: realistic small project (~4 trades, ~12 tasks, 1 baked-in
       slip so the board is interesting on first load) — lives in
       `public/scenario.json`
-- [ ] Timeline UI:
-  - [ ] day-column header + one lane per trade (CSS grid)
-  - [ ] task bars positioned by grid column; baseline shown as ghost bar
-  - [ ] SVG overlay for dependency arrows
-  - [ ] delay highlighting: on-time / minor slip (amber) / major slip (red)
-  - [ ] drag horizontally, snap to day, drop → store action → visible ripple
-- [ ] Docs: README (arch diagram, quick start), `docs/decisions.md` (ADRs),
+- [x] Timeline UI:
+  - [x] day-column header + one lane per trade (CSS grid)
+  - [x] task bars positioned by grid column; baseline shown as ghost bar
+  - [x] SVG overlay for dependency arrows
+  - [x] delay highlighting: on-time / minor slip (amber) / major slip (red)
+  - [x] drag horizontally, snap to day, drop → store action → visible ripple
+- [x] Docs: README (arch diagram, quick start), `docs/decisions.md` (ADRs),
       `CLAUDE.md`, `docs/ai-workflow.md`
 
 ### Tier 2 — follow-ups
