@@ -1,0 +1,6 @@
+# type(scope): subject  (max 72 chars, imperative mood)
+#
+# body: what and why, wrapped at 72 chars (optional)
+#
+# types: feat | fix | chore | docs | test | refactor | style | ci
+# scopes: scaffold, domain, state, ui, interaction, api, styles, lint, test, docs

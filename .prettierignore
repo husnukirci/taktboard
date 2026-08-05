@@ -1,0 +1,9 @@
+dist/
+coverage/
+package-lock.json
+
+# hand-written planning docs keep their original formatting
+PLAN.md
+PHASES.md
+CLAUDE.md
+docs/
