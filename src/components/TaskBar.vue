@@ -24,6 +24,7 @@ const ui = useUiStore()
 const { onPointerDown, cancelDrag, moveByDays, isDragging, previewStart } = useTaskDrag({
   taskId: () => props.task.id,
   currentStart: () => props.task.currentStart,
+  minStart: () => props.rangeStart,
 })
 
 const BAR_STYLE: Record<DelayLevel, string> = {

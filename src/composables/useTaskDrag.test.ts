@@ -145,6 +145,33 @@ describe('useTaskDrag', () => {
     expect(bar.releasePointerCapture).toHaveBeenCalled()
   })
 
+  it('clamps preview and drop to minStart, so nothing renders left of the grid', () => {
+    scope.stop()
+    scope = effectScope()
+    const result = scope.run(() =>
+      useTaskDrag({
+        taskId: 'a',
+        currentStart: currentStartOfA,
+        minStart: '2026-03-02',
+        dayWidthPx: DAY_W,
+      }),
+    )
+    if (result === undefined) throw new Error('effect scope did not run')
+    drag = result
+
+    const moveTask = vi.spyOn(store, 'moveTask')
+    pointerDown(100)
+    // 5 days left of the range start: raw snap would be 2026-02-25.
+    bar.dispatchEvent(pointerEvent('pointermove', -120))
+    flushRaf()
+    expect(drag.previewStart.value).toBe('2026-03-02')
+
+    // The drop commits the clamped day — here the origin, so no move at all.
+    bar.dispatchEvent(pointerEvent('pointerup', -120))
+    expect(moveTask).not.toHaveBeenCalled()
+    expect(ui.drag).toBeNull()
+  })
+
   it('does not touch the schedule when dropped on the original day', () => {
     const moveTask = vi.spyOn(store, 'moveTask')
     pointerDown(100)
