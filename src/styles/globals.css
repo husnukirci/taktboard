@@ -12,10 +12,11 @@
   --hdr-month-h: 1.5rem; /* month-label header row; day row sticks below it */
   --hdr-day-h: 2rem; /* day-number header row */
 
-  /* delay colors */
-  --ok: #10b981; /* on time */
-  --warn: #f59e0b; /* slip 1-2 days */
-  --late: #ef4444; /* slip >= 3 days */
+  /* Delay colors. Shades chosen for >= 4.5:1 (WCAG AA) against their bar
+     text: white on --ok/--late, amber-950 on --warn. */
+  --ok: #047857; /* on time; emerald-700, 5.5:1 */
+  --warn: #f59e0b; /* slip 1-2 days; amber-500, 7.0:1 */
+  --late: #dc2626; /* slip >= 3 days; red-600, 4.8:1 */
 }
 
 @theme {

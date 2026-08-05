@@ -4,6 +4,7 @@ import BoardToolbar from './components/BoardToolbar.vue'
 import TimelineBoard from './components/TimelineBoard.vue'
 import { useScenarioQuery } from './composables/useScenarioQuery'
 import { useScheduleStore } from './state/scheduleStore'
+import { moveAnnouncement } from './ui/announce'
 
 const { data, error, isPending } = useScenarioQuery()
 const store = useScheduleStore()
@@ -20,6 +21,11 @@ const taskCount = computed(() =>
 )
 
 const boardReady = computed(() => !isPending.value && error.value === null && taskCount.value > 0)
+
+/** Screen-reader move feedback; empty until the first move (and after reset). */
+const announcement = computed(() =>
+  store.schedule === null ? null : moveAnnouncement(store.schedule, store.lastChangedIds),
+)
 </script>
 
 <template>
@@ -54,5 +60,6 @@ const boardReady = computed(() => !isPending.value && error.value === null && ta
       The scenario has no tasks.
     </div>
     <TimelineBoard v-else class="mt-6" />
+    <p role="status" aria-live="polite" class="sr-only">{{ announcement }}</p>
   </main>
 </template>

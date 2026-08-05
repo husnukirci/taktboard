@@ -139,6 +139,11 @@ export function monthSpans(days: ISODate[]): MonthSpan[] {
   return spans
 }
 
+/** Single human date for announcements and labels: "14 Aug". */
+export function formatDay(date: ISODate): string {
+  return `${dayOfMonth(date)} ${MONTH_SHORT[monthIndex(date)]}`
+}
+
 /** Human date range for aria labels: "12–15 Aug", "30 Mar – 2 Apr", or "12 Aug". */
 export function formatDayRange(start: ISODate, durationDays: number): string {
   const end = addDays(start, durationDays - 1)
