@@ -65,19 +65,18 @@ const edges = computed<Edge[]>(() => {
 })
 
 /** Hovering a bar spotlights its incoming/outgoing edges and fades the rest. */
-function edgeClass(edge: Edge): string {
+function isSpotlit(edge: Edge): boolean {
   const hovered = ui.hoveredTaskId
-  if (hovered === null) return 'stroke-slate-400'
-  if (edge.predecessorId === hovered || edge.successorId === hovered) {
-    return 'stroke-blue-600'
-  }
-  return 'stroke-slate-400 opacity-20'
+  return hovered !== null && (edge.predecessorId === hovered || edge.successorId === hovered)
+}
+
+function edgeClass(edge: Edge): string {
+  if (ui.hoveredTaskId === null) return 'stroke-slate-400'
+  return isSpotlit(edge) ? 'stroke-blue-600' : 'stroke-slate-400 opacity-20'
 }
 
 function edgeMarker(edge: Edge): string {
-  return edgeClass(edge).includes('stroke-blue-600')
-    ? 'url(#dep-arrowhead-active)'
-    : 'url(#dep-arrowhead)'
+  return isSpotlit(edge) ? 'url(#dep-arrowhead-active)' : 'url(#dep-arrowhead)'
 }
 
 const sizePx = computed(() => {
