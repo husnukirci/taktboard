@@ -42,7 +42,7 @@ function laneRow(laneIndex: number): number {
     v-if="range !== null"
     role="region"
     aria-label="Project timeline"
-    class="overflow-auto rounded-lg border border-slate-200"
+    class="overflow-auto rounded-lg border border-slate-200 bg-white shadow-sm"
   >
     <div class="relative grid w-max bg-white" :style="gridStyle">
       <TimelineHeader :days="days" :range-start="range.start" />

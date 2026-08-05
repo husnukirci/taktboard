@@ -18,17 +18,41 @@ watchEffect(() => {
 const taskCount = computed(() =>
   store.schedule === null ? 0 : Object.keys(store.schedule.tasks).length,
 )
+
+const boardReady = computed(() => !isPending.value && error.value === null && taskCount.value > 0)
 </script>
 
 <template>
-  <main class="p-6">
-    <h1 class="text-2xl font-semibold">taktboard</h1>
-    <p v-if="isPending" class="mt-2 text-gray-600">Loading scenario…</p>
-    <p v-else-if="error" class="mt-2 whitespace-pre-line text-red-700">{{ error.message }}</p>
-    <p v-else-if="taskCount === 0" class="mt-2 text-gray-600">The scenario has no tasks.</p>
-    <template v-else>
-      <BoardToolbar class="mt-4" />
-      <TimelineBoard class="mt-2" />
-    </template>
+  <main class="min-h-screen bg-slate-50 p-6">
+    <header class="flex flex-wrap items-end justify-between gap-4">
+      <div>
+        <h1 class="text-2xl font-semibold tracking-tight text-slate-900">taktboard</h1>
+        <p class="mt-1 text-sm text-slate-500">
+          Construction schedule board — drag a task and watch downstream trades slip.
+        </p>
+      </div>
+      <BoardToolbar v-if="boardReady" />
+    </header>
+    <div
+      v-if="isPending"
+      class="mt-6 flex items-center justify-center gap-3 rounded-lg border border-slate-200 bg-white p-10 text-sm text-slate-500"
+    >
+      <span
+        class="size-4 rounded-full border-2 border-slate-300 border-t-slate-600 motion-safe:animate-spin"
+        aria-hidden="true"
+      />
+      Loading scenario…
+    </div>
+    <div v-else-if="error" class="mt-6 rounded-lg border border-red-200 bg-red-50 p-6">
+      <h2 class="text-sm font-semibold text-red-800">Couldn't load the scenario</h2>
+      <p class="mt-1 text-sm whitespace-pre-line text-red-700">{{ error.message }}</p>
+    </div>
+    <div
+      v-else-if="taskCount === 0"
+      class="mt-6 rounded-lg border border-slate-200 bg-white p-10 text-center text-sm text-slate-500"
+    >
+      The scenario has no tasks.
+    </div>
+    <TimelineBoard v-else class="mt-6" />
   </main>
 </template>
