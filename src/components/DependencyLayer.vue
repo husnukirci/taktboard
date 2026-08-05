@@ -42,6 +42,8 @@ function rectOf({ task, laneIndex }: PlacedTask, rangeStart: ISODate) {
 interface Edge {
   key: string
   d: string
+  predecessorId: string
+  successorId: string
 }
 
 const edges = computed<Edge[]>(() => {
@@ -55,10 +57,28 @@ const edges = computed<Edge[]>(() => {
     result.push({
       key: `${predecessorId}->${successorId}`,
       d: dependencyPath(rectOf(from, range.value.start), rectOf(to, range.value.start)),
+      predecessorId,
+      successorId,
     })
   }
   return result
 })
+
+/** Hovering a bar spotlights its incoming/outgoing edges and fades the rest. */
+function edgeClass(edge: Edge): string {
+  const hovered = ui.hoveredTaskId
+  if (hovered === null) return 'stroke-slate-400'
+  if (edge.predecessorId === hovered || edge.successorId === hovered) {
+    return 'stroke-blue-600'
+  }
+  return 'stroke-slate-400 opacity-20'
+}
+
+function edgeMarker(edge: Edge): string {
+  return edgeClass(edge).includes('stroke-blue-600')
+    ? 'url(#dep-arrowhead-active)'
+    : 'url(#dep-arrowhead)'
+}
 
 const sizePx = computed(() => {
   if (range.value === null) return { width: 0, height: 0 }
@@ -78,6 +98,7 @@ const sizePx = computed(() => {
     aria-hidden="true"
   >
     <defs>
+      <!-- Markers cannot inherit their path's stroke color, hence one per state. -->
       <marker
         id="dep-arrowhead"
         viewBox="0 0 8 8"
@@ -89,13 +110,25 @@ const sizePx = computed(() => {
       >
         <path d="M 0 0 L 8 4 L 0 8 z" class="fill-slate-400" />
       </marker>
+      <marker
+        id="dep-arrowhead-active"
+        viewBox="0 0 8 8"
+        refX="7"
+        refY="4"
+        markerWidth="7"
+        markerHeight="7"
+        orient="auto"
+      >
+        <path d="M 0 0 L 8 4 L 0 8 z" class="fill-blue-600" />
+      </marker>
     </defs>
     <path
       v-for="edge in edges"
       :key="edge.key"
       :d="edge.d"
-      marker-end="url(#dep-arrowhead)"
-      class="fill-none stroke-slate-400 stroke-[1.5]"
+      :marker-end="edgeMarker(edge)"
+      class="fill-none stroke-[1.5] transition-opacity motion-reduce:transition-none"
+      :class="edgeClass(edge)"
     />
   </svg>
 </template>
