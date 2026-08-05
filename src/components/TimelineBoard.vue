@@ -4,6 +4,7 @@ import { addDays, eachDay } from '../domain'
 import type { ISODate } from '../domain'
 import { useScheduleStore } from '../state/scheduleStore'
 import { gridColumnOfDate, isWeekend } from '../ui/geometry'
+import DependencyLayer from './DependencyLayer.vue'
 import TaskBar from './TaskBar.vue'
 import TimelineHeader from './TimelineHeader.vue'
 import TradeLabel from './TradeLabel.vue'
@@ -41,9 +42,9 @@ function laneRow(laneIndex: number): number {
     v-if="range !== null"
     role="region"
     aria-label="Project timeline"
-    class="overflow-auto rounded-lg border border-slate-200"
+    class="overflow-auto rounded-lg border border-slate-200 bg-white shadow-sm"
   >
-    <div class="grid w-max bg-white" :style="gridStyle">
+    <div class="relative grid w-max bg-white" :style="gridStyle">
       <TimelineHeader :days="days" :range-start="range.start" />
       <div
         v-for="day in weekendDays"
@@ -75,6 +76,8 @@ function laneRow(laneIndex: number): number {
           :ripple-seq="store.moveSeq"
         />
       </template>
+      <!-- Last child on purpose: paints above bars, below the sticky header/labels (z-10). -->
+      <DependencyLayer />
     </div>
   </div>
 </template>

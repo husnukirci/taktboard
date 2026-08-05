@@ -9,7 +9,7 @@
 
 import { computed, onScopeDispose, toValue } from 'vue'
 import type { ComputedRef, MaybeRefOrGetter } from 'vue'
-import { addDays } from '../domain'
+import { addDays, maxDate } from '../domain'
 import type { ISODate } from '../domain'
 import { useScheduleStore } from '../state/scheduleStore'
 import { useUiStore } from '../state/uiStore'
@@ -18,6 +18,11 @@ import { DAY_WIDTH_PX } from '../ui/geometry'
 export interface UseTaskDragOptions {
   taskId: MaybeRefOrGetter<string>
   currentStart: MaybeRefOrGetter<ISODate>
+  /**
+   * Earliest day a drag may preview or drop on — the timeline's first day,
+   * so the preview never renders left of the grid. Unset = unclamped.
+   */
+  minStart?: MaybeRefOrGetter<ISODate>
   /** Defaults to the shared geometry token; overridable for tests. */
   dayWidthPx?: number
 }
@@ -57,7 +62,9 @@ export function useTaskDrag(options: UseTaskDragOptions): UseTaskDrag {
   const isDragging = computed(() => previewStart.value !== null)
 
   function snappedStart(drag: ActiveDrag, clientX: number): ISODate {
-    return addDays(drag.startDate, Math.round((clientX - drag.originClientX) / dayWidthPx))
+    const raw = addDays(drag.startDate, Math.round((clientX - drag.originClientX) / dayWidthPx))
+    // Clamp preview and drop alike, so the bar always lands where it showed.
+    return options.minStart === undefined ? raw : maxDate(toValue(options.minStart), raw)
   }
 
   function flushPreview(): void {

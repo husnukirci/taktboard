@@ -84,6 +84,12 @@ demonstrate, and its data model would fight the domain's. Costs: DOM node
 count grows with tasks × days (fine at this scale, virtualization is a named
 Tier 3 item), and the HTML and SVG layers can only drift if a position is
 computed outside `geometry.ts` — the invariant reviewers should enforce.
+Phase 5 fixed the arrow shape as a gentle cubic bezier (`src/ui/edgePath.ts`)
+rather than an elbow: horizontal tangents at both anchors keep an
+`orient="auto"` arrowhead pointing into the successor bar, and a minimum
+handle length keeps zero-slack finish-to-start edges (successor starts on
+the predecessor's end date) readable where an elbow would degenerate into a
+vertical line.
 
 ## ADR 5 — Day-granular ISO dates, exclusive task end
 

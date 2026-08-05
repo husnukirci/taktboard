@@ -30,3 +30,9 @@ happened. Finalized as a narrative in Phase 6.
 
 - 2026-08-05: All unit tests green, yet the second QA drag silently did nothing: once a task slipped, the *next* task's baseline ghost (later in DOM, same lane) painted over the dragged bar and swallowed `pointerdown`. A Phase 3 latent bug that only interaction could expose — found by instrumenting pointer events in the browser, fixed with `pointer-events-none` on ghosts. Stacking bugs live outside happy-dom's reach.
 - 2026-08-05: The spec's "Escape during drag cancels" quietly conflicts with its own "no document-level listeners" rule — keyboard events follow focus, not pointer capture. Resolved by focusing the bar in `pointerdown` so an element-scoped `@keydown.esc` catches it; the deviation is a code comment, not a global listener.
+
+## Phase 5
+
+- 2026-08-05: Generated commit subject "SVG dependency arrow layer" bounced off commitlint's sentence-case rule (uppercase start); recommitted lowercase. Tiny, but the hook did its job on machine output as designed.
+- 2026-08-05: First drag-frame measurement used the Event Timing API with `durationThreshold: 0` and looked done — but the API silently excludes continuous events, so pointermove (the only event that mattered) never appeared. Replaced with a store-driven benchmark: drive `updateDrag` through Pinia, await the scheduler flush, sample 40 frames under 4× CPU throttle. An AI-suggested measurement that measured everything except the target.
+- 2026-08-05: The a11y checklist item caught that Phase 3's delay tokens never passed AA: white-on-emerald-500 was 2.5:1 and white-on-red-500 3.8:1 for 12px bar labels. A ten-line luminance script settled it; tokens moved to emerald-700 (5.5:1) and red-600 (4.8:1). Checklists beat eyeballs for contrast.

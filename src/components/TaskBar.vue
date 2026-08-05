@@ -2,6 +2,7 @@
 import { computed } from 'vue'
 import type { ISODate, Task } from '../domain'
 import { useTaskDrag } from '../composables/useTaskDrag'
+import { useUiStore } from '../state/uiStore'
 import { delayLevel, type DelayLevel } from '../ui/delayLevel'
 import { barGridColumn, formatDayRange } from '../ui/geometry'
 
@@ -18,9 +19,12 @@ const props = defineProps<{
   rippleSeq: number
 }>()
 
+const ui = useUiStore()
+
 const { onPointerDown, cancelDrag, moveByDays, isDragging, previewStart } = useTaskDrag({
   taskId: () => props.task.id,
   currentStart: () => props.task.currentStart,
+  minStart: () => props.rangeStart,
 })
 
 const BAR_STYLE: Record<DelayLevel, string> = {
@@ -68,6 +72,8 @@ const ariaLabel = computed(
     class="relative flex h-8 min-w-0 touch-none select-none items-center gap-1 self-center rounded-md px-2 text-xs font-medium shadow-sm outline-offset-2 focus-visible:outline-2 focus-visible:outline-blue-600"
     :class="[barClass, isDragging ? 'z-10 cursor-grabbing shadow-lg' : 'cursor-grab']"
     @pointerdown="onPointerDown"
+    @pointerenter="ui.setHovered(task.id)"
+    @pointerleave="ui.setHovered(null)"
     @keydown.esc="cancelDrag"
     @keydown.left.prevent="moveByDays(-1)"
     @keydown.right.prevent="moveByDays(1)"
