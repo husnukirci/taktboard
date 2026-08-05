@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { computed, watchEffect } from 'vue'
+import BoardToolbar from './components/BoardToolbar.vue'
 import TimelineBoard from './components/TimelineBoard.vue'
 import { useScenarioQuery } from './composables/useScenarioQuery'
 import { useScheduleStore } from './state/scheduleStore'
@@ -25,6 +26,9 @@ const taskCount = computed(() =>
     <p v-if="isPending" class="mt-2 text-gray-600">Loading scenario…</p>
     <p v-else-if="error" class="mt-2 whitespace-pre-line text-red-700">{{ error.message }}</p>
     <p v-else-if="taskCount === 0" class="mt-2 text-gray-600">The scenario has no tasks.</p>
-    <TimelineBoard v-else class="mt-4" />
+    <template v-else>
+      <BoardToolbar class="mt-4" />
+      <TimelineBoard class="mt-2" />
+    </template>
   </main>
 </template>
