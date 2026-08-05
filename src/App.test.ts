@@ -10,7 +10,7 @@ afterEach(() => {
 })
 
 describe('App', () => {
-  it('boots through loading into the scenario summary', async () => {
+  it('boots through loading into the timeline board', async () => {
     vi.stubGlobal(
       'fetch',
       vi.fn().mockResolvedValue({
@@ -29,7 +29,7 @@ describe('App', () => {
     expect(wrapper.text()).toContain('Loading scenario')
 
     await vi.waitFor(() => {
-      expect(wrapper.text()).toContain('12 tasks · 2026-03-02 → 2026-03-29')
+      expect(wrapper.text()).toContain('Electrical rough-in')
     })
   })
 })
