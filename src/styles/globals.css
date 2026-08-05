@@ -1,0 +1,17 @@
+@import 'tailwindcss';
+
+/*
+ * Design tokens for the timeline board. Placeholder values here;
+ * final values are fixed by the Phase 3 layout contract.
+ */
+:root {
+  /* layout */
+  --day-w: 2.75rem; /* width of one day column */
+  --lane-h: 4rem; /* height of one trade lane */
+  --trade-w: 10rem; /* width of the sticky trade-name column */
+
+  /* delay colors */
+  --ok: #10b981; /* on time */
+  --warn: #f59e0b; /* slip 1-2 days */
+  --late: #ef4444; /* slip >= 3 days */
+}
